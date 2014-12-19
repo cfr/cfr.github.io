@@ -8,6 +8,20 @@
           <!--
           html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
           #td_wrap { vertical-align: middle; text-align: center; }
+          .spin {
+              position: absolute;
+              top: 25%;
+              left: 50%;
+              width: 257px;
+              height: 257px;
+              margin:-128px 0 0 -128px;
+              -webkit-animation:spin 257s linear infinite;
+              -moz-animation:spin 257s linear infinite;
+              animation:spin 257s linear infinite;
+          }
+          @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+          @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+          @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
           -->
         </style>
     </head>
@@ -16,14 +30,14 @@
         <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
 
           <div>
-            <img src="octopus.svg" onerror="this.src=octopus.png" height="257" width="257">
+            <img class="spin" src="octopus.svg" onerror="this.src=octopus.png" height="257" width="257">
             </p>
             <a href="http://blog.cfr.pw">tumblr</a> · 
             <a href="https://twitter.com/cfr">twitter</a> · 
             <a href="https://linkedin.com/in/cfrss">linkedin</a> · 
             <a href="https://careers.stackoverflow.com/cfr">careers2</a> · 
             <a href="https://plus.google.com/+StanSerebryakov">google+</a> · 
-            <a href="mailto:cfr@gmx.us">email</a>
+            <a href="mailto:i+h@cfr.pw">email</a>
           </div>
 
           <div>&nbsp;</div>
