@@ -24,6 +24,7 @@
           @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
           -->
         </style>
+
     </head>
 
     <body>
@@ -38,10 +39,31 @@
             <a href="https://linkedin.com/in/cfrss">linkedin</a> · 
             <a href="https://careers.stackoverflow.com/cfr">careers2</a> · 
             <a href="https://github.com/cfr">github</a> · 
-            <a href="https://plus.google.com/+StanSerebryakov">google+</a> · 
             <a href="mailto:i+h@cfr.pw">email</a>
-            <!--a href="skype:cfr.ssv?chat">skype</a>
-            <a href="tel:+79217771338">tel</a-->
+            </p>
+            <script language="javascript"> 
+            function toggle() {
+              var ele = document.getElementById("toggleText");
+              var text = document.getElementById("displayText");
+              if(ele.style.display == "block") {
+                    ele.style.display = "none";
+                    text.innerHTML = "...";
+                }
+              else {
+                ele.style.display = "block";
+                text.style.display = "none";
+              }
+            } 
+            </script>
+            <a id="displayText" href="javascript:toggle();">...</a>
+            <div id="toggleText" style="display: none">
+             <a href="https://plus.google.com/+StanSerebryakov">google+</a> · 
+             <a href="https://www.facebook.com/cfrss">facebook</a> · 
+             <a href="https://bitbucket.org/cfr">bitbucket</a> · 
+             <a href="http://www.last.fm/user/cfrsss">last fm</a> · 
+             <a href="skype:cfr.ssv?chat">skype</a> · 
+             <a href="tel:+79217771338">tel</a>
+            </div>
           </div>
 
           <div>&nbsp;</div>
