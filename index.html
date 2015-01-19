@@ -8,13 +8,7 @@
           <!--
           html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
           #td_wrap { vertical-align: middle; text-align: center; }
-          .spin {
-              position: absolute;
-              top: 25%;
-              left: 50%;
-              width: 257px;
-              height: 257px;
-              margin:-128px 0 0 -128px;
+          .spin { position: absolute; top: 25%; left: 50%; width: 257px; height: 257px; margin:-128px 0 0 -128px;
               -webkit-animation:spin 257s linear infinite;
               -moz-animation:spin 257s linear infinite;
               animation:spin 257s linear infinite;
@@ -24,12 +18,9 @@
           @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
           -->
         </style>
-
     </head>
-
     <body>
         <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
-
           <div>
             <img class="spin" src="octopus.svg" onError="this.style.visibility='hidden'" height="257" width="257">
             <!-- img src: http://publicdomainvectors.org/en/free-clipart/Octopus-vector-image/7633.html -->
@@ -41,26 +32,25 @@
             <a href="https://github.com/cfr">github</a> · 
             <a href="mailto:i+h@cfr.pw">email</a>
             </p>
-            <script language="javascript"> 
-            function toggle() {
-              var ele = document.getElementById("toggleText");
-              var text = document.getElementById("displayText");
-              if(ele.style.display == "block") {
-                    ele.style.display = "none";
-                    text.innerHTML = "...";
-                }
-              else {
-                ele.style.display = "block";
-                text.style.display = "none";
+            <script language="javascript">
+            function t() {
+              var h = document.getElementById("h");
+              var e = document.getElementById("e");
+              if(e.style.display == "block") {
+                    h.style.display = "none";
+                    e.innerHTML = "...";
+                } else {
+                h.style.display = "block";
+                e.style.display = "none";
               }
-            } 
+            }
             </script>
-            <a id="displayText" href="javascript:toggle();">...</a>
-            <div id="toggleText" style="display: none">
+            <a id="e" href="javascript:t();">...</a>
+            <div id="h" style="display: none">
              <a href="https://plus.google.com/+StanSerebryakov">google+</a> · 
              <a href="https://www.facebook.com/cfrss">facebook</a> · 
              <a href="https://bitbucket.org/cfr">bitbucket</a> · 
-             <a href="http://www.last.fm/user/cfrsss">last fm</a> · 
+             <a href="http://www.last.fm/user/cfrsss">lastfm</a> · 
              <a href="skype:cfr.ssv?chat">skype</a> · 
              <a href="tel:+79217771338">tel</a>
             </div>
@@ -74,7 +64,6 @@
             <p>The pine needles spin.</p>
             <!-- https://github.com/gabemart/hipku -->
          </div>
-
         </td></tr></tbody></table>
     </body>
 </html>
