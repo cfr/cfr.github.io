@@ -8,10 +8,9 @@
           <!--
           html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
           #td_wrap { vertical-align: middle; text-align: center; }
-          .spin { position: absolute; top: 25%; left: 50%; width: 257px; height: 257px; margin:-128px 0 0 -128px;
-              -webkit-animation:spin 257s linear infinite;
-              -moz-animation:spin 257s linear infinite;
-              animation:spin 257s linear infinite;
+          .spin { position: absolute; top: 25%; left: 50%; width: 257px; height: 257px;
+            margin:-128px 0 0 -128px; -webkit-animation:spin 257s linear infinite;
+            -moz-animation:spin 257s linear infinite; animation:spin 257s linear infinite;
           }
           @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
           @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
@@ -20,6 +19,7 @@
         </style>
     </head>
     <body>
+    <script src="fade.js"></script>
         <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
           <div>
             <img class="spin" src="octopus.svg" onError="this.style.visibility='hidden'" height="257" width="257">
@@ -33,32 +33,21 @@
             <a href="mailto:i+h@cfr.pw">email</a>
             </p>
             <script language="javascript">
-            function t() {
-              var h = document.getElementById("h");
-              var e = document.getElementById("e");
-              if(e.style.display == "block") {
-                    h.style.display = "none";
-                    e.innerHTML = "...";
-                } else {
-                h.style.display = "block";
-                e.style.display = "none";
-              }
-            }
+              function t() { fade("e", 111.1); fade("h", 666.6); }
             </script>
             <a id="e" href="javascript:t();">...</a>
-            <div id="h" style="display: none">
+            <div id="h" style="opacity: 0">
              <a href="https://plus.google.com/+StanSerebryakov">google+</a> · 
              <a href="https://www.facebook.com/cfrss">facebook</a> · 
              <a href="https://bitbucket.org/cfr">bitbucket</a> · 
              <a href="http://www.last.fm/user/cfrsss">lastfm</a> · 
-             <a href="http://instagram.com/cfrs">instagram</a> · 
+             <a href="https://instagram.com/cfrs">instagram</a> · 
              <a href="skype:cfr.ssv?chat">skype</a> · 
              <a href="tel:+79217771338">tel</a>
             </div>
           </div>
-
           <div>&nbsp;</div>
-
+          </p>
           <div style="font-size:75%; line-height:30%">
             <p>The ruthless pale mouse </p>
             <p>groans in the distant mountains.</p>
