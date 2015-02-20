@@ -16,6 +16,7 @@ function fade(eid, duration) {
     element.FadeState = element.FadeState == 2 ? -1 : 1;
     element.FadeTimeLeft = duration;
     setTimeout("animateFade(" + new Date().getTime() + ",'" + eid + "'," + duration + ")", 33);
+    element.style.pointerEvents = "auto";
   }
 }
 
