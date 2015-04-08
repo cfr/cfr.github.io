@@ -1,0 +1,67 @@
+==================================================================
+https://keybase.io/cfr
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://cfr.pw
+  * I am cfr (https://keybase.io/cfr) on keybase.
+  * I have a public key with fingerprint 5373 805B 626B E356 E6AD  D788 B678 EC84 92B3 C513
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "5373805b626be356e6add788b678ec8492b3c513",
+            "host": "keybase.io",
+            "key_id": "b678ec8492b3c513",
+            "kid": "0101dd8a723f9b3db9d57329407b98a130a75c81bb540d23c1de8c00207e4e169b5e0a",
+            "uid": "44f9457e91d3f44b74db2f18a6129d19",
+            "username": "cfr"
+        },
+        "service": {
+            "hostname": "cfr.pw",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1428483473,
+    "expire_in": 157680000,
+    "prev": "f2d0cad7370f3f59ec679f6c93824604c7cd479750a9faf402a779b21246b48d",
+    "seqno": 4,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.8
+Comment: https://keybase.io/crypto
+
+yMIWAnicbVJdSBRBAD7t1DwxFYseyrLFhxB/9md2Z/fKnorKKPwhekiQnZ1Z3dTb
+a+88U1EUicorJNGwLCWqhyIqrXzwpUuNKEUrI/uhgkOMMiutHsqyZqXopXkZ5vub
++WZmKH6JwxXx8s5060jNTDhi+LZY6didNnO8lkEmrmbctUwZWZx0w1NCLK9lePyM
+mxEFKMisiCReQkQQJSKpGENZRhKUiSYDhUeCJnICk8GUmj7bQWOQ6iNZhkkxuig2
+MEX/oy9bJFiO5TCWVcgLuoIEjBQsQoFXAAuRIqucwKpQ1GQOIRGwmBc0DhNZY1me
+hQQQTlKQSFiVxlUuxgGgK0CEROGwoAOAIMCI1zlZlThewZxiC33E8qgVhKo13WLq
+MhgKBAyN2O3tEv/ILG8VNXgt029qZjnFSv1+r9u2+Ku9tqaKoOI/7mJkeDC9O2oI
+EMtnmB7GzVGl5jfsOA7wMpAFAIUMhhzwGhYpNmyFCCWZpcPehgRopM5jVlMxFCCr
+C7qoEE2Cii5piiDzQGKBBjUMoAJFVlV0VQcsr0KoIJ6jLAIyZuw++z0m4wb0mGoJ
+jfQZJR7VX2kRpm4gVOR0RLgc0VGR9us7XLGJf/9EbCBmPsbVfG1+U/tdiS/Izdxx
+QguWd1UkoK+dUa3mrbSx6dXjZMOcqe7q7hruS3vUlHHwU/7A/Lfkno/9IWd7w6tA
+ymhHQU9jbHfe82d9OweXr0kXU4KnKvq5hbb0lW2dF05Wv96T3tv0RPrhPTPZvyzn
++/orI+FLX+5nvvHV54x2H4tpOXc01BHUFybyL+7N/dVXk3Q5u3bcytGnSKnzUPbG
+n+6x8+qLpMjH74Phh6dnexJC9ZXN1zlX4UTH1tBcMLV3ajilanP5UOPZhMIth9fF
+LYysrWl5Gtcw6XvQuX12rmjFtvCRxFVv78U5Z/MKUxNbbi69kR89dnVfkTOc/O7z
+4If42N81Lypp
+=zu9v
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/cfr
+
+==================================================================
