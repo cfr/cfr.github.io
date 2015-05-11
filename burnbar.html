@@ -1,0 +1,19 @@
+<html><head>
+<title>📏🔥</title>
+<script src="http://code.jquery.com/jquery.min.js"></script>
+</head><body>
+<script type="text/javascript">
+$(document).ready(function() {
+ $("button").click(function() {
+  $.post('http://s.cfr.pw:9604/', $("input").val(), function(data) { $("#reply").html(data); });
+ });
+});
+</script>
+<textarea id="input" rows="4" cols="50">
+
+</textarea>
+</p><button id="button">go</button>
+</p>reply:
+</p><div id="reply"></div>
+</body></html>
+
