@@ -1,22 +1,37 @@
 <html><head>
 <title>📏🔥</title>
 <script src="http://code.jquery.com/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
 </head><body>
 <!-- TODO: http://ace.c9.io/#nav=embedding -->
 <script type="text/javascript">
 $(document).ready(function(){
  $("button").click(function() {
    $.post('http://s.cfr.pw:9604/', {data:  $("input").val()}, function(data) {
-    var j = JSON.stringify(data).replace("\\n", "\n").replace("\\\"", "\"");
-    $("#reply").html(j); });
+    var icode = data["Interface"].replace("\\n", "\r\n").replace("\\\"", "\"")
+    var ecode = data["Entities"].replace("\\n", "\r\n").replace("\\\"", "\"")
+    $("#ents").html(ecode);
+    $("#intf").html(icode); });
  });
+
+ var intf = ace.edit("intf");
+ intf.setTheme("ace/theme/monokai");
+ intf.getSession().setMode("ace/mode/text");
+
+ var ents = ace.edit("ents");
+ ents.setTheme("ace/theme/monokai");
+ ents.getSession().setMode("ace/mode/text");
 });
 </script>
 <textarea id="input" rows="4" cols="50">
 
 </textarea>
 </p><button id="button">go</button>
-</p>reply:
-</p><div id="reply"></div>
+</p>
+<div id="intf">
+</div>
+</p>
+<div id="ents">
+</div>
 </body></html>
 
