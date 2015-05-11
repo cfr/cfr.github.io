@@ -17,10 +17,11 @@ $(document).ready(function(){
       var icode = data["Interface"];
       var ecode = data["Entities"];
       var code = (icode +'\n\n'+ ecode).replace("\\n", "\r\n").replace("\\\"", "\"");
-      $('#editor').html(code);
-      var intf = ace.edit('editor');
-      intf.setTheme("ace/theme/cobalt");
-      intf.getSession().setMode("ace/mode/c_cpp");
+      document.getElementById('editor').style.fontSize='10px';
+      var src = ace.edit('editor');
+      src.setTheme("ace/theme/cobalt");
+      src.getSession().setMode("ace/mode/c_cpp");
+      src.setValue(code);
     });
  });
 });
@@ -47,10 +48,6 @@ met register Credentials
     username String
     password String
 
-met test Void
-    a1 Int
-    a2 NSNumber?
-    a3 Bool
 </textarea>
 </p><button id="button">go</button>
 </p><div id="editor"></div>
