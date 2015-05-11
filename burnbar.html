@@ -11,21 +11,47 @@
 <!-- TODO: http://ace.c9.io/#nav=embedding -->
 <script type="text/javascript">
 $(document).ready(function(){
- $("button").click(function() {
-   $.post('http://s.cfr.pw:9604/', {data: $("input").value}, function(data) {
-    var icode = data["Interface"];
-    var ecode = data["Entities"];
-    var code = (ecode + icode).replace("\\n", "\r\n").replace("\\\"", "\"");
-    $("#editor").html(code);
-    var intf = ace.edit("editor");
-    intf.setTheme("ace/theme/cobalt");
-    intf.getSession().setMode("ace/mode/c_cpp");
-  });
+ $('button').click(function() {
+    var spec = $('input').val();
+    $.post('http://s.cfr.pw:9604/', spec, function(data) {
+      var icode = data["Interface"];
+      var ecode = data["Entities"];
+      var code = (icode +'\n\n'+ ecode).replace("\\n", "\r\n").replace("\\\"", "\"");
+      $('#editor').html(code);
+      var intf = ace.edit('editor');
+      intf.setTheme("ace/theme/cobalt");
+      intf.getSession().setMode("ace/mode/c_cpp");
+    });
  });
 });
 </script>
 
-<textarea id="input" rows="4" cols="50"></textarea>
+<textarea id="input" rows="4" cols="50">
+met ping Void
+
+rec Credentials
+   login  String?
+   pass  String?
+
+rec UserInfo - TODO: Any, Equatable, Hashable
+   age NSNumber?
+   photoURLs  [String]?
+   creds  Credentials?
+   friends { String : UserInfo }
+   name  String?
+
+met user.login UserInfo login
+   creds Credentials
+
+met register Credentials
+    username String
+    password String
+
+met test Void
+    a1 Int
+    a2 NSNumber?
+    a3 Bool
+</textarea>
 </p><button id="button">go</button>
 </p><div id="editor"></div>
 
