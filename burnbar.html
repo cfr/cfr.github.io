@@ -12,7 +12,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
  $('button').click(function() {
-    var spec = $('input').val();
+    var spec = $(this).parent().find('textarea#input').val();
     $.post('http://s.cfr.pw:9604/', spec, function(data) {
       var icode = data["Interface"];
       var ecode = data["Entities"];
