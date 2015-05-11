@@ -2,13 +2,11 @@
 <title>📏🔥</title>
 <script src="http://code.jquery.com/jquery.min.js"></script>
 <style type="text/css" media="screen">
-    #editor {  position: absolute; top: 50; left: 400; width: 700; height: 500; }
-    #input { position: absolute; top: 50; left: 50; width: 300; height: 500; }
-    #button { position: absolute; top: 50; left: 360; }
+#editor {  position: absolute; top: 50; left: 400; width: 700; height: 500; }
+#input { position: absolute; top: 50; left: 50; width: 300; height: 500; }
+#button { position: absolute; top: 50; left: 360; }
 </style>
-
 </head><body>
-<!-- TODO: http://ace.c9.io/#nav=embedding -->
 <script type="text/javascript">
 $(document).ready(function(){
  $('button').click(function() {
@@ -28,18 +26,23 @@ $(document).ready(function(){
 </script>
 
 <textarea id="input" rows="4" cols="50">
-met ping Void
+
+- data
 
 rec Credentials
    login  String?
    pass  String?
 
-rec UserInfo - TODO: Any, Equatable, Hashable
+rec UserInfo
    age NSNumber?
    photoURLs  [String]?
    creds  Credentials?
    friends { String : UserInfo }
    name  String?
+
+- rpc methods
+
+met ping Void
 
 met user.login UserInfo login
    creds Credentials
