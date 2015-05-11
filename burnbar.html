@@ -2,10 +2,13 @@
 <title>📏🔥</title>
 <script src="http://code.jquery.com/jquery.min.js"></script>
 </head><body>
+<!-- TODO: http://ace.c9.io/#nav=embedding -->
 <script type="text/javascript">
-$(document).ready(function() {
+$(document).ready(function(){
  $("button").click(function() {
-  $.post('http://s.cfr.pw:9604/', $("input").val(), function(data) { $("#reply").html(data); });
+   $.post('http://s.cfr.pw:9604/', {data:  $("input").val()}, function(data) {
+    var j = JSON.stringify(data).replace("\\n", "\n").replace("\\\"", "\"");
+    $("#reply").html(j); });
  });
 });
 </script>
