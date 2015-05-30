@@ -30,15 +30,15 @@ $(document).ready(function(){
 - data
 
 rec Credentials
-   login  String?
-   pass  String?
+   login  String
+   pass  String
 
-rec UserInfo: YourProto
-   age NSNumber?
-   photoURLs  [String]?
+rec User YourProto
+   id String
+   age Int?
+   photoURLs [String]
    creds  Credentials?
    friends { String : UserInfo }
-   name  String?
 
 - rpc methods
 
