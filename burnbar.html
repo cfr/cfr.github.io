@@ -14,7 +14,14 @@ $(document).ready(function(){
     $.post('http://s.cfr.pw:9604/', spec, function(data) {
       var icode = data["Interface"];
       var ecode = data["Entities"];
-      var code = (icode +'\n\n'+ ecode).replace("\\n", "\r\n").replace("\\\"", "\"");
+      var err = data["error"];
+      var ver = data["version"];
+      var code = "// 📏🔥 Generated with http://cfr.pw/burnbar " + ver + "\n"
+      if(err) { code += "\n" + err }
+      if(icode) { if(ecode) {
+          code += (icode +'\n\n'+ ecode).replace("\\n", "\r\n").replace("\\\"", "\"");
+        }
+      }
       document.getElementById('editor').style.fontSize='10px';
       var src = ace.edit('editor');
       src.setTheme("ace/theme/cobalt");
