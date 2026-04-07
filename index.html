@@ -113,13 +113,15 @@
         scene.add(flag);
     }
 
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+    timer.connect(document);
 
     function animate() {
         requestAnimationFrame(animate);
         if (!flag) return;
 
-        const time = clock.getElapsedTime();
+        timer.update();
+        const time = timer.getElapsed();
         const positions = geometry.attributes.position.array;
 
         const waveSpeed = 2.2;
