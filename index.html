@@ -1,54 +1,147 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-        <meta name="yandex-verification" content="755f1d2420ae4e91" />
-        <meta name="yandex-verification" content="6f08dca99bb70c52" />
-        <title>Cfr Pee Wee: Stan Serebryakov homepage</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
-        <style type="text/css">
-          body { font-family: monospace }
-          <!--
-          html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
-          #td_wrap { vertical-align: middle; text-align: center; }
-          -->
-        </style>
-    </head>
-    <body link="#262831" vlink="#262831" alink="#262831"> <!--bgcolor="#E5EEF8"-->
-    <script src="fade.js"></script>
-        <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
-          <div>
-            <img style="filter: blur(5px);" src="invader-160.png" height="160px" width="160px">
-            </p>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="yandex-verification" content="755f1d2420ae4e91" />
+    <meta name="yandex-verification" content="6f08dca99bb70c52" />
+    <title>Cfr: Stan Serebriakov homepage</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
+    <style type="text/css">
+      body { font-family: monospace }
+      <!--
+      html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
+      #td_wrap { vertical-align: middle; text-align: center; }
+      -->
+    </style>
+</head>
+<body link="#262831" vlink="#262831" alink="#262831"> <!--bgcolor="#E5EEF8"-->
+<script src="fade.js"></script>
 
-            <a href="https://linkedin.com/in/cfrss">linkedin</a> ·
-            <a href="https://github.com/cfr">github</a> ·
-            <a href="mailto:i+h@cfr.pw">email</a> ·
-            <a href="https://twitter.com/cfr">twitter</a>
+<table id="tbl_wrap"><tbody><tr><td id="td_wrap">
+  <div>
+    <div id="flag-container" style="width: 160px; height: 160px; position: relative; overflow: hidden; display: inline-block;">
+        <img id="fallback-img" style="display: block;" src="invader-160.png" height="160" width="160" alt="Loading fallback">
+    </div>
 
-            </p>
-            <script language="javascript">
-              function t() { fade("e", 111.1); fade("h", 666.6); }
-            </script>
-            <a id="e" href="javascript:t();">...</a>
-            <div id="h" style="opacity: 0; pointer-events: none">
-             <a href="https://keybase.io/cfr">keybase</a> ·
-             <a href="https://t.me/cfrss">telegram</a> ·
-             <!-- <a href="https://careers.stackoverflow.com/cfr">careers2</a> · -->
-             <a href="http://stackoverflow.com/users/187663/cfr">stackoverflow</a>
-             <!-- <a href="https://bitbucket.org/cfr">bitbucket</a> · -->
-             <!-- <a href="https://news.ycombinator.com/user?id=cfrs">hackernews</a> -->
-             </p>
-             <a href="https://blog.cfr.pw">tumblr</a> ·
-             <a href="https://instagram.com/cfrs">instagram</a> ·
-             <!-- a href="skype:cfr.ssv?chat">skype</a> · -->
-             <a href="tel:+79217771338">tel</a>
-            </div>
-          </div>
-          <div>&nbsp;</div>
-          </p>
-          <div style="font-size:50%;color:#E1EAF4">2024</div>
-          <p style="margin-bottom:170px;"></p>
-        </td></tr></tbody></table>
-    </body>
+    </p>
+
+    <a href="https://linkedin.com/in/cfrss">linkedin</a> ·
+    <a href="https://github.com/cfr">github</a> ·
+    <a href="mailto:i+h@cfr.pw">email</a> ·
+    <a href="https://x.com/cfr">x</a>
+
+    </p>
+    <script language="javascript">
+      function t() { fade("e", 111.1); fade("h", 666.6); }
+    </script>
+    <a id="e" href="javascript:t();">...</a>
+    <div id="h" style="opacity: 0; pointer-events: none">
+     <a href="https://keybase.io/cfr">keybase</a> ·
+     <a href="https://t.me/cfrss">telegram</a> ·
+     <a href="http://stackoverflow.com/users/187663/cfr">stackoverflow</a>
+     </p>
+     <a href="https://blog.cfr.pw">tumblr</a> ·
+     <a href="https://instagram.com/cfrs">instagram</a> ·
+     <a href="tel:+79217771338">tel</a>
+    </div>
+  </div>
+  <div>&nbsp;</div>
+  </p>
+  <div style="font-size:50%;color:#E1EAF4">2026</div>
+  <p style="margin-bottom:170px;"></p>
+</td></tr></tbody></table>
+
+<script type="module">
+    import * as THREE from 'https://esm.sh/three@0.183.2.0';
+    const container = document.getElementById('flag-container');
+    const fallbackImg = document.getElementById('fallback-img');
+    let renderer, scene, camera, flag, geometry, originalPositions;
+    const flagWidth = 2.5;
+
+    fallbackImg.style.display = 'none';
+
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(160, 160);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearAlpha(0);
+    renderer.toneMappingExposure = 1.3;
+    renderer.toneMapping = THREE.LinearToneMapping
+    container.appendChild(renderer.domElement);
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0, 3.5);
+    camera.lookAt(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(2, 3, 5);
+    scene.add(dirLight);
+
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        'invader-160.png',
+        onLoad,
+        undefined,
+        onError
+    );
+
+    function onLoad(texture) {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        createFlag(texture);
+        animate();
+    }
+
+    function onError(err) {
+        console.error('Failed to load texture:', err);
+        fallbackImg.style.display = 'block';
+    }
+
+    function createFlag(texture) {
+        geometry = new THREE.PlaneGeometry(flagWidth, flagWidth, 20, 20);
+        originalPositions = geometry.attributes.position.array.slice();
+
+        const material = new THREE.MeshStandardMaterial({
+            map: texture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            roughness: 0.6,
+            metalness: 0.1
+        });
+
+        flag = new THREE.Mesh(geometry, material);
+        scene.add(flag);
+    }
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (!flag) return;
+
+        const time = clock.getElapsedTime();
+        const positions = geometry.attributes.position.array;
+
+        const waveSpeed = 2.2;
+        const waveFrequency = 1.4;
+        const maxAmplitude = 0.35;
+
+        for (let i = 0; i < positions.length; i += 3) {
+            const x = originalPositions[i];
+            const poleFactor = (x + flagWidth / 2) / flagWidth;
+            positions[i + 2] = maxAmplitude * poleFactor * Math.sin(x * waveFrequency - time * waveSpeed);
+        }
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.computeVertexNormals();
+
+        camera.position.x = Math.sin(time) * 0.5;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+</script>
+</body>
 </html>
