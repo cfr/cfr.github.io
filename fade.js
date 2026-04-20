@@ -1,4 +1,3 @@
-// src: http://tech.pro/tutorial/725/javascript-tutorial-simple-fade-animation
 
 function fade(eid, duration) {
   var element = document.getElementById(eid);
