@@ -5,8 +5,14 @@ function initGL(doc, fragmentShader) {
     if (!container || !fallbackImg) return;
 
     const canvas = doc.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
+    var cssWidth = 128;
+    var cssHeight = 128;
+    var devicePixelRatio = window.devicePixelRatio || 1;
+    canvas.width  = cssWidth * devicePixelRatio;
+    canvas.height = cssHeight * devicePixelRatio;
+    canvas.style.width  = cssWidth + "px";
+    canvas.style.height = cssHeight + "px";
+
     container.appendChild(canvas);
 
     const gl = canvas.getContext('webgl', { alpha: true });
