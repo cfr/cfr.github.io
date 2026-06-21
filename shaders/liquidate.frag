@@ -1,5 +1,6 @@
 
 precision mediump float;
+
 varying vec2 vUV;
 uniform sampler2D uTexture;
 uniform float uTime;

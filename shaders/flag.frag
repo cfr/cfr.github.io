@@ -1,9 +1,11 @@
 
 precision mediump float;
+
 varying vec2 vUV;
 uniform sampler2D uTexture;
 uniform float uTime;
-const float PI = 3.14159265359;
+
+const float pi = 3.14159265359;
 
 void main() {
     vec2 uv = vUV;
@@ -11,7 +13,7 @@ void main() {
     const float speed = 2.0;
     const float amplitude = 0.07;
     float x = 1.0 - uv.x;
-    float phase = x * PI * folds + uTime * speed;
+    float phase = x * pi * folds + uTime * speed;
     float wave = sin(phase) * x;
     uv.y += wave * amplitude;
     uv.x += x * cos(phase) * amplitude * 0.2;

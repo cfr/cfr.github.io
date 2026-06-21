@@ -50,9 +50,16 @@
 <script type="module">
 const fragmentShaders = [
     'shaders/flag.frag',
-    'shaders/liquidate.frag'
+    'shaders/liquidate.frag',
+    'shaders/foil.frag',
+    'shaders/poly.frag',
 ];
-const fsPath = fragmentShaders[Math.floor(Math.random() * fragmentShaders.length)];
+var fsPath = fragmentShaders[Math.floor(Math.random() * fragmentShaders.length)];
+const params = new URLSearchParams(window.location.search);
+if (params.has('shader')) {
+    const shader = params.get('shader');
+    fsPath = 'shaders/' + shader + '.frag';
+}
 const fragmentShader = await fetch(fsPath).then(r => r.text());
 initGL(document, fragmentShader);
 </script>
