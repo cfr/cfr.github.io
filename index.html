@@ -57,14 +57,24 @@ const fragmentShaders = [
     'shaders/grid.frag',
     'shaders/phong.frag',
 ];
-var fsPath = fragmentShaders[Math.floor(Math.random() * fragmentShaders.length)];
+
+const shaderSources = await Promise.all(fragmentShaders.map(p => fetch(p).then(r => r.text())));
+
+let shaderIndex = Math.floor(Math.random() * fragmentShaders.length);
+
 const params = new URLSearchParams(window.location.search);
 if (params.has('shader')) {
     const shader = params.get('shader');
-    fsPath = 'shaders/' + shader + '.frag';
+    const idx = fragmentShaders.indexOf('shaders/' + shader + '.frag');
+    if (idx !== -1) shaderIndex = idx;
 }
-const fragmentShader = await fetch(fsPath).then(r => r.text());
-initGL(document, fragmentShader);
+
+const swapShader = initGL(document, shaderSources[shaderIndex]);
+
+document.getElementById('container').addEventListener('click', () => {
+    shaderIndex = (shaderIndex + 1) % fragmentShaders.length;
+    swapShader(shaderSources[shaderIndex]);
+});
 </script>
 </body>
 </html>

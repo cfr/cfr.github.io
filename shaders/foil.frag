@@ -4,6 +4,8 @@ precision mediump float;
 varying vec2 vUV;
 uniform sampler2D uTexture;
 uniform float uTime;
+uniform vec2 uMouse;
+uniform float uHover;
 
 const float pi = 3.14159265359;
 
@@ -42,6 +44,7 @@ vec4 foil(vec4 tex, vec2 uv, vec2 a)
 void main() {
     vec2 uv = vUV;
     vec4 tex = texture2D(uTexture, uv);
-    gl_FragColor = tex + foil(tex, uv - 0.5, vec2(uTime, uTime + pi));
+    vec2 a = mix(vec2(uTime, uTime + pi), uMouse * vec2(3.0, 11.0), uHover);
+    gl_FragColor = tex + foil(tex, uv - 0.5, a);
 }
 

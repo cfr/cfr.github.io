@@ -18,7 +18,7 @@ function initGL(doc, fragmentShader) {
     const gl = canvas.getContext('webgl', { alpha: true });
     if (!gl) { fallbackImg.style.display = 'block'; return; }
 
-    const vertexShader = `
+    const vertexShaderSrc = `
         attribute vec2 aPosition;
         attribute vec2 aUV;
         varying vec2 vUV;
@@ -39,11 +39,7 @@ function initGL(doc, fragmentShader) {
         return shader;
     };
 
-    const prog = gl.createProgram();
-    gl.attachShader(prog, compileShader(vertexShader, gl.VERTEX_SHADER));
-    gl.attachShader(prog, compileShader(fragmentShader, gl.FRAGMENT_SHADER));
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
+    const vs = compileShader(vertexShaderSrc, gl.VERTEX_SHADER);
 
     const data = new Float32Array([
         -1, -1,  1, 1,
@@ -58,16 +54,36 @@ function initGL(doc, fragmentShader) {
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-    const posLoc = gl.getAttribLocation(prog, 'aPosition');
-    const uvLoc  = gl.getAttribLocation(prog, 'aUV');
-    gl.enableVertexAttribArray(posLoc);
-    gl.enableVertexAttribArray(uvLoc);
-    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
-    gl.vertexAttribPointer(uvLoc,  2, gl.FLOAT, false, 16, 8);
+    let prog, fs, posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
 
-    const texLoc  = gl.getUniformLocation(prog, 'uTexture');
-    const timeLoc = gl.getUniformLocation(prog, 'uTime');
-    gl.uniform1i(texLoc, 0);
+    function setupProgram(fsSrc) {
+        if (prog) gl.deleteProgram(prog);
+        if (fs) gl.deleteShader(fs);
+
+        prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        fs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
+        if (!fs) return;
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        gl.useProgram(prog);
+
+        posLoc = gl.getAttribLocation(prog, 'aPosition');
+        uvLoc  = gl.getAttribLocation(prog, 'aUV');
+        texLoc  = gl.getUniformLocation(prog, 'uTexture');
+        timeLoc = gl.getUniformLocation(prog, 'uTime');
+        mouseLoc = gl.getUniformLocation(prog, 'uMouse');
+        hoverLoc = gl.getUniformLocation(prog, 'uHover');
+        gl.uniform1i(texLoc, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.enableVertexAttribArray(posLoc);
+        gl.enableVertexAttribArray(uvLoc);
+        gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
+        gl.vertexAttribPointer(uvLoc,  2, gl.FLOAT, false, 16, 8);
+    }
+
+    setupProgram(fragmentShader);
 
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -79,6 +95,21 @@ function initGL(doc, fragmentShader) {
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    let mouseX = 0.0;
+    let mouseY = 0.0;
+    let hover = 0.0;
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) / rect.width;
+        mouseY = (e.clientY - rect.top) / rect.height;
+        hover = 1.0;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        hover = 0.0;
+    });
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -95,8 +126,12 @@ function initGL(doc, fragmentShader) {
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(timeLoc, performance.now() / 1000);
+        gl.uniform2f(mouseLoc, mouseX, (1.0 - mouseY));
+        gl.uniform1f(hoverLoc, hover);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
+
+    return setupProgram;
 }

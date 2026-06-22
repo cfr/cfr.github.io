@@ -4,6 +4,8 @@ precision mediump float;
 varying vec2 vUV;
 uniform sampler2D uTexture;
 uniform float uTime;
+uniform vec2 uMouse;
+uniform float uHover;
 
 const float pi = 3.14;
 const float N = 8.0;
@@ -12,11 +14,11 @@ vec2 flipy(vec2 uv) {
     return vec2(uv.x, 1.0 - uv.y);
 }
 
-vec2 getPoint(vec2 corner, float size, float time, float l) {
+vec2 getPoint(vec2 corner, float size, vec2 time, float l) {
     vec2 point = corner + size * 0.5;
-    float t = 3.0 * mod(time, 2.0*pi);
-    float x = sin(t + pi*0.5);
-    float y = sin(2.0 * t);
+    vec2 t = mod(time, 2.0*pi);
+    float x = sin(t.x + pi*0.5);
+    float y = sin(2.0 * t.y);
     float a = 0.2*size * l;
     point += a * vec2(x, y);
     return point;
@@ -39,7 +41,8 @@ void main() {
             vec4 tex = texture2D(uTexture, flipy(adjCorner));
 
             float lum = length(tex.rgb);
-            vec2 pt = getPoint(adjCorner, size, uTime*0.3, lum);
+            vec2 t = mix(vec2(uTime), uMouse * pi, uHover);
+            vec2 pt = getPoint(adjCorner, size, t, lum);
 
             float ptSize = size * lum * lum / 4.0;
             ptSize = max(size / 5.0, ptSize);

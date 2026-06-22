@@ -4,16 +4,19 @@ precision mediump float;
 varying vec2 vUV;
 uniform sampler2D uTexture;
 uniform float uTime;
+uniform vec2 uMouse;
+uniform float uHover;
 
 const float pi = 3.14159265359;
 
 void main() {
     vec2 uv = vUV;
-    const float folds = 3.5;
+    float folds = 3.5 + max(0.0, 5.0*uMouse.y*uHover);
     const float speed = 2.0;
     const float amplitude = 0.07;
     float x = 1.0 - uv.x;
-    float phase = x * pi * folds + uTime * speed;
+    float t = mix(uTime * speed, uMouse.x * pi * folds, uHover);
+    float phase = x * pi * folds + t;
     float wave = sin(phase) * x;
     uv.y += wave * amplitude;
     uv.x += x * cos(phase) * amplitude * 0.2;
