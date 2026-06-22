@@ -56,7 +56,12 @@ function initGL(doc, fragmentShader) {
 
     let prog, fs, posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
 
+    let mouseX = 0.0;
+    let mouseY = 0.0;
+    let hover = 0.0;
+
     function setupProgram(fsSrc) {
+        hover = 0.0;
         if (prog) gl.deleteProgram(prog);
         if (fs) gl.deleteShader(fs);
 
@@ -96,10 +101,6 @@ function initGL(doc, fragmentShader) {
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    let mouseX = 0.0;
-    let mouseY = 0.0;
-    let hover = 0.0;
-
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
         mouseX = (e.clientX - rect.left) / rect.width;
@@ -108,6 +109,19 @@ function initGL(doc, fragmentShader) {
     });
 
     canvas.addEventListener('mouseleave', () => {
+        hover = 0.0;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouseX = (touch.clientX - rect.left) / rect.width;
+        mouseY = (touch.clientY - rect.top) / rect.height;
+        hover = 1.0;
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => {
         hover = 0.0;
     });
 
@@ -123,13 +137,14 @@ function initGL(doc, fragmentShader) {
     img.src = 'invader-128.png';
 
     function render() {
+        requestAnimationFrame(render);
+        if (gl.isContextLost()) return;
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(timeLoc, performance.now() / 1000);
         gl.uniform2f(mouseLoc, mouseX, (1.0 - mouseY));
         gl.uniform1f(hoverLoc, hover);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
-        requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 

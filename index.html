@@ -73,7 +73,7 @@ const swapShader = initGL(document, shaderSources[shaderIndex]);
 
 document.getElementById('container').addEventListener('click', () => {
     shaderIndex = (shaderIndex + 1) % fragmentShaders.length;
-    swapShader(shaderSources[shaderIndex]);
+    requestAnimationFrame(() => swapShader(shaderSources[shaderIndex]));
 });
 </script>
 </body>
