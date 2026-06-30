@@ -7,7 +7,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.14159265359;
+const float pi = 3.1416;
 
 // based on balatro foil shader
 vec4 foil(vec4 tex, vec2 uv, vec2 a)

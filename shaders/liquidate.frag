@@ -7,12 +7,12 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.14159265359;
+const float pi = 3.1416;
 
 void main() {
     const float timeScale = 0.1;
     vec4 tex = texture2D(uTexture, vUV);
-    float time = timeScale*uTime; //* mix(uTime, uMouse.x * pi * 2.0, uHover);
+    float time = timeScale*uTime;
     float st = sin(time);
     float ct = cos(time);
     vec2 t = mix(st*vec2(ct, st), uMouse, uHover);

@@ -7,23 +7,27 @@
     <title>Cfr: Stan Serebriakov homepage</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
     <style type="text/css">
-      [data-theme="light"] body { background: #fdf6e3; color: #859900 }
-      [data-theme="dark"]  body { background: #002b36; color: #839496 }
-      [data-theme="light"] a { color: #2aa198 }
-      [data-theme="dark"]  a { color: #b58900 }
-      body { font-family: monospace }
+      body { font-family: monospace; background: #fdf6e3; color: #859900 }
+      a { color: #2aa198 }
+      [data-theme="dark"] body { background: #002b36; color: #839496 }
+      [data-theme="dark"] a { color: #b58900 }
       html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
       #td_wrap { vertical-align: middle; text-align: center; }
+      #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+      #tbl_wrap { position: relative; z-index: 1; }
     </style>
 </head>
 <body>
 <script src="fade.js"></script>
 <script src="gl.js"></script>
+<script src="bg.js"></script>
+
+<div id="bg"></div>
 
 <table id="tbl_wrap"><tbody><tr><td id="td_wrap">
   <div>
-    <div id="container" style="width: 128px; height: 128px; position: relative; overflow: hidden; display: inline-block;">
-        <img id="fallback-img" style="display: block;" src="invader-128.png" height="128" width="128" alt="Loading fallback">
+    <div id="container" style="width: 256px; height: 256px; position: relative; overflow: hidden; display: inline-block; z-index: 2;">
+        <img id="fallback-img" style="display: block;" src="invader-256.png" height="256" width="256" alt="Loading fallback">
     </div>
     </p>
     <a href="mailto:i+h@cfr.pw">email</a> ·
@@ -49,7 +53,13 @@
   <div>&nbsp;</div>
   </p>
   <div style="font-size:50%;color:#93a1a1">2026</div>
-  <div style="font-size:50%;color:#93a1a1" id="ts">light / dark</div>
+  <div style="font-size:50%" id="ts">
+    <a id="ts-light" href="#" style="color:#b58900">light</a> <a id="ts-dark" href="#" style="color:#2aa198">dark</a>
+  </div>
+  <style>
+    [data-theme="light"] #ts-light { display: none }
+    [data-theme="dark"]  #ts-dark  { display: none }
+  </style>
   <p style="margin-bottom:170px;"></p>
 </td></tr></tbody></table>
 
@@ -57,21 +67,41 @@
 const mq = window.matchMedia('(prefers-color-scheme: dark)');
 let theme = localStorage.getItem('theme') || (mq.matches ? 'dark' : 'light');
 
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', theme);
-  const other = theme === 'dark' ? 'light' : 'dark';
-  document.getElementById('ts').innerHTML = theme === 'dark'
-    ? '<a href="javascript:void(0)">light</a> / dark'
-    : 'light / <a href="javascript:void(0)">dark</a>';
-  document.getElementById('ts').querySelector('a').onclick = () => {
-    theme = other;
+document.documentElement.setAttribute('data-theme', theme);
+
+document.getElementById('ts-light').addEventListener('click', (e) => {
+    e.preventDefault();
+    theme = 'light';
     localStorage.setItem('theme', theme);
-    applyTheme();
-  };
+    document.documentElement.setAttribute('data-theme', theme);
+    updateColors();
+});
+
+document.getElementById('ts-dark').addEventListener('click', (e) => {
+    e.preventDefault();
+    theme = 'dark';
+    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    updateColors();
+});
+
+function hexToRgb(hex) {
+    const v = parseInt(hex.slice(1), 16);
+    return [(v >> 16) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255];
 }
-applyTheme();
-</script>
-<script type="module">
+
+const themeColors = {
+    light: ['#fdf6e3', '#839496'],
+    dark:  ['#002b36', '#073642'],
+};
+
+let bg;
+
+function updateColors() {
+    const [c1, c2] = themeColors[theme];
+    if (bg) bg.setColors(hexToRgb(c1), hexToRgb(c2));
+}
+
 const fragmentShaders = [
     'shaders/flag.frag',
     'shaders/liquidate.frag',
@@ -81,20 +111,33 @@ const fragmentShaders = [
     'shaders/phong.frag',
 ];
 
-const shaderSources = await Promise.all(fragmentShaders.map(p => fetch(p).then(r => r.text())));
+let shaderSources = [];
+let swapShader;
+let shaderIndex = 0;
 
-let shaderIndex = Math.floor(Math.random() * fragmentShaders.length);
+try {
+    shaderSources = await Promise.all(fragmentShaders.map(p => fetch(p).then(r => r.text())));
+    shaderIndex = Math.floor(Math.random() * fragmentShaders.length);
 
-const params = new URLSearchParams(window.location.search);
-if (params.has('shader')) {
-    const shader = params.get('shader');
-    const idx = fragmentShaders.indexOf('shaders/' + shader + '.frag');
-    if (idx !== -1) shaderIndex = idx;
-}
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('shader')) {
+        const shader = params.get('shader');
+        const idx = fragmentShaders.indexOf('shaders/' + shader + '.frag');
+        if (idx !== -1) shaderIndex = idx;
+    }
 
-const swapShader = initGL(document, shaderSources[shaderIndex]);
+    swapShader = initGL(document, shaderSources[shaderIndex]);
+} catch (e) { console.error('shaders init:', e); }
 
-document.getElementById('container').addEventListener('click', () => {
+try {
+    const plasmaSrc = await fetch('shaders/plasma.frag').then(r => r.text());
+    bg = initBG(document, plasmaSrc);
+    updateColors();
+} catch (e) { console.error('plasma init:', e); }
+
+document.body.addEventListener('click', (e) => {
+    if (!swapShader || !shaderSources.length) return;
+    if (e.target.tagName === 'A' || e.target.closest('a')) return;
     shaderIndex = (shaderIndex + 1) % fragmentShaders.length;
     requestAnimationFrame(() => swapShader(shaderSources[shaderIndex]));
 });

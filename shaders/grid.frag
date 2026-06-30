@@ -7,8 +7,8 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.14;
-const float N = 8.0;
+const float pi = 3.1416;
+const float N = 32.0;
 
 vec2 flipy(vec2 uv) {
     return vec2(uv.x, 1.0 - uv.y);
@@ -44,10 +44,10 @@ void main() {
             vec2 t = mix(vec2(uTime), uMouse * pi, uHover);
             vec2 pt = getPoint(adjCorner, size, t, lum);
 
-            float ptSize = size * lum * lum / 4.0;
-            ptSize = max(size / 5.0, ptSize);
+            float ptSize = size * lum * lum / 3.0;
+            ptSize = max(size / 3.0, ptSize);
 
-            if (donut(pt, uv, ptSize*0.3, ptSize) && lum > 0.5) {
+            if (donut(pt, uv, ptSize*0.3, ptSize) && lum > 0.2) {
                 gl_FragColor = tex;
                 return;
             }

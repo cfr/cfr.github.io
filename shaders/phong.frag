@@ -44,7 +44,7 @@ float phong(vec2 uv, vec3 n, vec3 ldir) {
 }
 
 void main() {
-    vec2 px = vec2(0.0078125); // 1/texsize = 1/128
+    vec2 px = vec2(0.0039); // 1/texsize = 1/256
     vec2 uv = vUV;
     vec4 tex = texture2D(uTexture, uv);
     if (tex.a < 0.1) {

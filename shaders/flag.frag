@@ -7,7 +7,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.14159265359;
+const float pi = 3.1416;
 
 void main() {
     vec2 uv = vUV;

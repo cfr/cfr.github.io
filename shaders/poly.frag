@@ -7,7 +7,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.14159265359;
+const float pi = 3.1416;
 
 vec3 hsl2rgb3(vec3 hsl) {
     vec3 rgb = clamp(abs(mod(hsl.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);

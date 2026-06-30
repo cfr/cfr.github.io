@@ -5,18 +5,49 @@ function initGL(doc, fragmentShader) {
     if (!container || !fallbackImg) return;
 
     const canvas = doc.createElement('canvas');
-    var cssWidth = 128;
-    var cssHeight = 128;
+    var cssWidth = 256;
+    var cssHeight = 256;
     var devicePixelRatio = window.devicePixelRatio || 1;
     canvas.width  = cssWidth * devicePixelRatio;
     canvas.height = cssHeight * devicePixelRatio;
     canvas.style.width  = cssWidth + "px";
     canvas.style.height = cssHeight + "px";
 
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '1';
+
     container.appendChild(canvas);
 
-    const gl = canvas.getContext('webgl', { alpha: true });
+    function getGLContext(c) {
+        const attrs = { alpha: true, failIfMajorPerformanceCaveat: false };
+        const names = ['webgl', 'experimental-webgl', 'webgl2'];
+        for (const name of names) {
+            try {
+                const ctx = c.getContext(name, attrs);
+                if (ctx) return ctx;
+            } catch (e) { /* try next */ }
+        }
+        return null;
+    }
+
+    const gl = getGLContext(canvas);
     if (!gl) { fallbackImg.style.display = 'block'; return; }
+
+    canvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+    }, false);
+
+    canvas.addEventListener('webglcontextrestored', () => {
+        setupProgram(fragmentShader);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        if (img.complete && img.naturalWidth > 0) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
+        }
+    }, false);
 
     const vertexShaderSrc = `
         attribute vec2 aPosition;
@@ -55,7 +86,6 @@ function initGL(doc, fragmentShader) {
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
     let prog, fs, posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
-
     let mouseX = 0.0;
     let mouseY = 0.0;
     let hover = 0.0;
@@ -94,8 +124,8 @@ function initGL(doc, fragmentShader) {
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
 
     gl.enable(gl.BLEND);
@@ -111,6 +141,14 @@ function initGL(doc, fragmentShader) {
     canvas.addEventListener('mouseleave', () => {
         hover = 0.0;
     });
+
+    canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouseX = (touch.clientX - rect.left) / rect.width;
+        mouseY = (touch.clientY - rect.top) / rect.height;
+        hover = 1.0;
+    }, { passive: true });
 
     canvas.addEventListener('touchmove', (e) => {
         e.preventDefault();
@@ -130,11 +168,10 @@ function initGL(doc, fragmentShader) {
     img.onload = () => {
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.generateMipmap(gl.TEXTURE_2D);
         fallbackImg.style.display = 'none';
     };
     img.onerror = () => { fallbackImg.style.display = 'block'; };
-    img.src = 'invader-128.png';
+    img.src = 'invader-256.png';
 
     function render() {
         requestAnimationFrame(render);
