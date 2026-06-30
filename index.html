@@ -7,12 +7,16 @@
     <title>Cfr: Stan Serebriakov homepage</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
     <style type="text/css">
+      [data-theme="light"] body { background: #fdf6e3; color: #859900 }
+      [data-theme="dark"]  body { background: #002b36; color: #839496 }
+      [data-theme="light"] a { color: #2aa198 }
+      [data-theme="dark"]  a { color: #b58900 }
       body { font-family: monospace }
       html, body, #tbl_wrap { height: 100%; width: 100%; padding: 0; margin: 0; }
       #td_wrap { vertical-align: middle; text-align: center; }
     </style>
 </head>
-<body link="#262831" vlink="#262831" alink="#262831">
+<body>
 <script src="fade.js"></script>
 <script src="gl.js"></script>
 
@@ -44,10 +48,29 @@
   </div>
   <div>&nbsp;</div>
   </p>
-  <div style="font-size:50%;color:#E1EAF4">2026</div>
+  <div style="font-size:50%;color:#93a1a1">2026</div>
+  <div style="font-size:50%;color:#93a1a1" id="ts">light / dark</div>
   <p style="margin-bottom:170px;"></p>
 </td></tr></tbody></table>
 
+<script type="module">
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+let theme = localStorage.getItem('theme') || (mq.matches ? 'dark' : 'light');
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', theme);
+  const other = theme === 'dark' ? 'light' : 'dark';
+  document.getElementById('ts').innerHTML = theme === 'dark'
+    ? '<a href="javascript:void(0)">light</a> / dark'
+    : 'light / <a href="javascript:void(0)">dark</a>';
+  document.getElementById('ts').querySelector('a').onclick = () => {
+    theme = other;
+    localStorage.setItem('theme', theme);
+    applyTheme();
+  };
+}
+applyTheme();
+</script>
 <script type="module">
 const fragmentShaders = [
     'shaders/flag.frag',
