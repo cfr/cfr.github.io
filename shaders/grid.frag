@@ -10,6 +10,11 @@ uniform float uHover;
 const float pi = 3.1416;
 const float N = 32.0;
 
+vec2 mixAngle(vec2 base, vec2 target, float k) {
+    vec2 diff = mod(target - base + vec2(pi), 2.0 * pi) - pi;
+    return base + k * diff;
+}
+
 vec2 flipy(vec2 uv) {
     return vec2(uv.x, 1.0 - uv.y);
 }
@@ -41,7 +46,7 @@ void main() {
             vec4 tex = texture2D(uTexture, flipy(adjCorner));
 
             float lum = length(tex.rgb);
-            vec2 t = mix(vec2(uTime), uMouse * pi, uHover);
+            vec2 t = mixAngle(vec2(uTime), uMouse * pi, uHover);
             vec2 pt = getPoint(adjCorner, size, t, lum);
 
             float ptSize = size * lum * lum / 3.0;

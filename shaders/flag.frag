@@ -9,13 +9,18 @@ uniform float uHover;
 
 const float pi = 3.1416;
 
+float mixAngle(float base, float target, float k) {
+    float diff = mod(target - base + pi, 2.0 * pi) - pi;
+    return base + k * diff;
+}
+
 void main() {
     vec2 uv = vUV;
     float folds = 3.5 + max(0.0, 5.0*uMouse.y*uHover);
     const float speed = 2.0;
     const float amplitude = 0.07;
     float x = 1.0 - uv.x;
-    float t = mix(uTime * speed, uMouse.x * pi * folds, uHover);
+    float t = mixAngle(uTime * speed, uMouse.x * pi * folds, uHover);
     float phase = x * pi * folds + t;
     float wave = sin(phase) * x;
     uv.y += wave * amplitude;

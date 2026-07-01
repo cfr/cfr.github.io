@@ -9,6 +9,11 @@ uniform float uHover;
 
 const float pi = 3.1416;
 
+float mixAngle(float base, float target, float k) {
+    float diff = mod(target - base + pi, 2.0 * pi) - pi;
+    return base + k * diff;
+}
+
 vec3 hsl2rgb3(vec3 hsl) {
     vec3 rgb = clamp(abs(mod(hsl.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
     return hsl.z + hsl.y * (rgb - 0.5) * (1.0 - abs(2.0 * hsl.z - 1.0));
@@ -67,7 +72,7 @@ vec4 poly(vec4 tex, vec2 uv, vec2 a)
         + cos(length(p3) / 27.193) * sin(p3.x / 21.92)
         )) / 2.0;
 
-    float hueShift = 0.5 + 0.5 * cos(a.x * 2.612 + (plasma - 0.5) * 3.14);
+    float hueShift = 0.5 + 0.5 * cos(a.x * pi + (plasma - 0.5) * pi);
 
     hsl.x += hueShift + a.y * 0.04;
     hsl.y  = min(0.6, hsl.y + 0.5);
@@ -80,8 +85,10 @@ vec4 poly(vec4 tex, vec2 uv, vec2 a)
 void main() {
     vec2 uv = vUV;
     vec4 tex = texture2D(uTexture, uv);
-    float time = uTime * 0.4;
-    vec2 a = mix(vec2(time, fract(time) + pi), uMouse, uHover);
+    float time = uTime*0.25;
+    float ax = mixAngle(time, uMouse.x, uHover);
+    float ay = mix(fract(time) + pi, uMouse.y, uHover);
+    vec2 a = vec2(ax, ay);
     gl_FragColor = poly(tex, uv - 0.5, a);
 }
 

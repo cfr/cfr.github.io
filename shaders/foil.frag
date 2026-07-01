@@ -9,6 +9,11 @@ uniform float uHover;
 
 const float pi = 3.1416;
 
+vec2 mixAngle(vec2 base, vec2 target, float k) {
+    vec2 diff = mod(target - base + vec2(pi), 2.0 * pi) - pi;
+    return base + k * diff;
+}
+
 // based on balatro foil shader
 vec4 foil(vec4 tex, vec2 uv, vec2 a)
 {
@@ -44,7 +49,7 @@ vec4 foil(vec4 tex, vec2 uv, vec2 a)
 void main() {
     vec2 uv = vUV;
     vec4 tex = texture2D(uTexture, uv);
-    vec2 a = mix(vec2(uTime, uTime + pi), uMouse * vec2(3.0, 11.0), uHover);
+    vec2 a = mixAngle(vec2(uTime, uTime + pi), uMouse * vec2(3.0, 11.0), uHover);
     gl_FragColor = tex + foil(tex, uv - 0.5, a);
 }
 

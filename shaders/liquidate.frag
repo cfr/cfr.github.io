@@ -10,7 +10,7 @@ uniform float uHover;
 const float pi = 3.1416;
 
 void main() {
-    const float timeScale = 0.1;
+    const float timeScale = 0.25;
     vec4 tex = texture2D(uTexture, vUV);
     float time = timeScale*uTime;
     float st = sin(time);

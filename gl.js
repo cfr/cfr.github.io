@@ -96,10 +96,13 @@ function initGL(doc, fragmentShader) {
     let prog, fs, posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
     let mouseX = 0.0;
     let mouseY = 0.0;
+    let hoverTarget = 0.0;
     let hover = 0.0;
+    const hoverRate = 3.0;
 
     function setupProgram(fsSrc) {
         hover = 0.0;
+        hoverTarget = 0.0;
         if (prog) gl.deleteProgram(prog);
         if (fs) gl.deleteShader(fs);
 
@@ -143,11 +146,11 @@ function initGL(doc, fragmentShader) {
         const rect = canvas.getBoundingClientRect();
         mouseX = (e.clientX - rect.left) / rect.width;
         mouseY = (e.clientY - rect.top) / rect.height;
-        hover = 1.0;
+        hoverTarget = 1.0;
     });
 
     canvas.addEventListener('mouseleave', () => {
-        hover = 0.0;
+        hoverTarget = 0.0;
     });
 
     canvas.addEventListener('touchstart', (e) => {
@@ -155,7 +158,7 @@ function initGL(doc, fragmentShader) {
         const touch = e.touches[0];
         mouseX = (touch.clientX - rect.left) / rect.width;
         mouseY = (touch.clientY - rect.top) / rect.height;
-        hover = 1.0;
+        hoverTarget = 1.0;
     }, { passive: true });
 
     canvas.addEventListener('touchmove', (e) => {
@@ -164,11 +167,11 @@ function initGL(doc, fragmentShader) {
         const touch = e.touches[0];
         mouseX = (touch.clientX - rect.left) / rect.width;
         mouseY = (touch.clientY - rect.top) / rect.height;
-        hover = 1.0;
+        hoverTarget = 1.0;
     }, { passive: false });
 
     canvas.addEventListener('touchend', () => {
-        hover = 0.0;
+        hoverTarget = 0.0;
     });
 
     const img = new Image();
@@ -194,12 +197,25 @@ function initGL(doc, fragmentShader) {
         }, 100);
     });
 
+    let lastFrameTime = performance.now();
+    const period = 8.0 * Math.PI;
+
     function render() {
         requestAnimationFrame(render);
         if (gl.isContextLost()) return;
+
+        const now = performance.now();
+        const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+        lastFrameTime = now;
+
+        const easeAmount = 1.0 - Math.exp(-hoverRate * dt);
+        hover += (hoverTarget - hover) * easeAmount;
+
+        const wrappedTime = (now / 1000) % period;
+
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform1f(timeLoc, performance.now() / 1000);
+        gl.uniform1f(timeLoc, wrappedTime);
         gl.uniform2f(mouseLoc, mouseX, (1.0 - mouseY));
         gl.uniform1f(hoverLoc, hover);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
