@@ -5,13 +5,21 @@ function initGL(doc, fragmentShader) {
     if (!container || !fallbackImg) return;
 
     const canvas = doc.createElement('canvas');
-    var cssWidth = 256;
-    var cssHeight = 256;
     var devicePixelRatio = window.devicePixelRatio || 1;
-    canvas.width  = cssWidth * devicePixelRatio;
-    canvas.height = cssHeight * devicePixelRatio;
-    canvas.style.width  = cssWidth + "px";
-    canvas.style.height = cssHeight + "px";
+
+    function getCanvasSize() {
+        const rect = container.getBoundingClientRect();
+        return {
+            w: Math.round((rect.width || 256) * devicePixelRatio),
+            h: Math.round((rect.height || 256) * devicePixelRatio),
+        };
+    }
+
+    const initialSize = getCanvasSize();
+    canvas.width  = initialSize.w;
+    canvas.height = initialSize.h;
+    canvas.style.width  = '100%';
+    canvas.style.height = '100%';
 
     canvas.style.position = 'absolute';
     canvas.style.top = '0';
@@ -172,6 +180,19 @@ function initGL(doc, fragmentShader) {
     };
     img.onerror = () => { fallbackImg.style.display = 'block'; };
     img.src = 'invader-256.png';
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const size = getCanvasSize();
+            if (size.w !== canvas.width || size.h !== canvas.height) {
+                canvas.width = size.w;
+                canvas.height = size.h;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+        }, 100);
+    });
 
     function render() {
         requestAnimationFrame(render);
