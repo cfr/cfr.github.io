@@ -21,7 +21,7 @@ function initGL(doc, fragmentShader) {
     container.appendChild(canvas);
 
     function getGLContext(c) {
-        const attrs = { alpha: true, failIfMajorPerformanceCaveat: false };
+        const attrs = { alpha: true, premultipliedAlpha: false, failIfMajorPerformanceCaveat: false };
         const names = ['webgl', 'experimental-webgl', 'webgl2'];
         for (const name of names) {
             try {
@@ -45,7 +45,7 @@ function initGL(doc, fragmentShader) {
         if (img.complete && img.naturalWidth > 0) {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
         } else {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
         }
     }, false);
 
@@ -126,7 +126,7 @@ function initGL(doc, fragmentShader) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255,255,255,255]));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
