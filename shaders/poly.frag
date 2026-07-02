@@ -1,4 +1,3 @@
-
 precision mediump float;
 
 varying vec2 vUV;
@@ -60,11 +59,11 @@ vec4 poly(vec4 tex, vec2 uv, vec2 a)
     float desaturate = 1.0 - max(0.0, 0.05 * (1.1 - chroma));
     vec4 hsl = rgb2hsl(vec4(tex.r * desaturate, tex.g * desaturate, tex.b, tex.a));
 
-    float t = a.y * 2.221;
+    float t = a.y;
 
-    vec2 p1 = uv + 50.0 * vec2(sin(-t / 143.6340), cos(-t / 99.4324));
-    vec2 p2 = uv + 50.0 * vec2(cos( t /  53.1532), cos( t / 61.4532));
-    vec2 p3 = uv + 50.0 * vec2(sin(-t /  87.5322), sin(-t / 49.0000));
+    vec2 p1 = uv + vec2( 31.0,  24.0) + 2.0 * vec2(sin(-t),       cos(-t + 1.0));
+    vec2 p2 = uv + vec2(-27.0,  38.0) + 2.0 * vec2(cos( t + 2.0), cos( t + 4.0));
+    vec2 p3 = uv + vec2( 42.0, -17.0) + 2.0 * vec2(sin(-t + 3.0), sin(-t + 5.0));
 
     float plasma = (1.0 + (
           cos(length(p1) / 19.483)
@@ -72,9 +71,9 @@ vec4 poly(vec4 tex, vec2 uv, vec2 a)
         + cos(length(p3) / 27.193) * sin(p3.x / 21.92)
         )) / 2.0;
 
-    float hueShift = 0.5 + 0.5 * cos(a.x * pi + (plasma - 0.5) * pi);
+    float hueShift = 0.5 + 0.5 * cos(a.x * 3.0 + (plasma - 0.5) * pi); // 3.0 was pi: integer keeps the wrap seamless
 
-    hsl.x += hueShift + a.y * 0.04;
+    hsl.x += hueShift + 0.04 * sin(a.y);
     hsl.y  = min(0.6, hsl.y + 0.5);
 
     tex.rgb = hsl2rgb(hsl).rgb;
@@ -85,9 +84,9 @@ vec4 poly(vec4 tex, vec2 uv, vec2 a)
 void main() {
     vec2 uv = vUV;
     vec4 tex = texture2D(uTexture, uv);
-    float time = uTime*0.25;
+    float time = uTime * 0.25;
     float ax = mixAngle(time, uMouse.x, uHover);
-    float ay = mix(fract(time) + pi, uMouse.y, uHover);
+    float ay = mixAngle(time, uMouse.y, uHover);
     vec2 a = vec2(ax, ay);
     gl_FragColor = poly(tex, uv - 0.5, a);
 }

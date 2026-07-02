@@ -5,13 +5,13 @@ function initGL(doc, fragmentShader) {
     if (!container || !fallbackImg) return;
 
     const canvas = doc.createElement('canvas');
-    var devicePixelRatio = window.devicePixelRatio || 1;
 
     function getCanvasSize() {
+        const dpr = window.devicePixelRatio || 1;
         const rect = container.getBoundingClientRect();
         return {
-            w: Math.round((rect.width || 256) * devicePixelRatio),
-            h: Math.round((rect.height || 256) * devicePixelRatio),
+            w: Math.round((rect.width || 256) * dpr),
+            h: Math.round((rect.height || 256) * dpr),
         };
     }
 
@@ -41,21 +41,7 @@ function initGL(doc, fragmentShader) {
     }
 
     const gl = getGLContext(canvas);
-    if (!gl) { fallbackImg.style.display = 'block'; return; }
-
-    canvas.addEventListener('webglcontextlost', (e) => {
-        e.preventDefault();
-    }, false);
-
-    canvas.addEventListener('webglcontextrestored', () => {
-        setupProgram(fragmentShader);
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        if (img.complete && img.naturalWidth > 0) {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        } else {
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
-        }
-    }, false);
+    if (!gl) return;
 
     const vertexShaderSrc = `
         attribute vec2 aPosition;
@@ -67,20 +53,7 @@ function initGL(doc, fragmentShader) {
         }
     `;
 
-    const compileShader = (src, type) => {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, src);
-        gl.compileShader(shader);
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error('Shader error:', gl.getShaderInfoLog(shader));
-            return null;
-        }
-        return shader;
-    };
-
-    const vs = compileShader(vertexShaderSrc, gl.VERTEX_SHADER);
-
-    const data = new Float32Array([
+    const quadData = new Float32Array([
         -1, -1,  1, 1,
          1, -1,  0, 1,
         -1,  1,  1, 0,
@@ -89,29 +62,61 @@ function initGL(doc, fragmentShader) {
          1,  1,  0, 0,
     ]);
 
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    const compileShader = (src, type) => {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, src);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('Shader error:', gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    };
 
-    let prog, fs, posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
+    let vs = null, buf = null, tex = null;
+    let prog = null, fs = null;
+    let posLoc, uvLoc, texLoc, timeLoc, mouseLoc, hoverLoc;
+    let currentSrc = fragmentShader;
+    let textureReady = false;
     let mouseX = 0.0;
     let mouseY = 0.0;
     let hoverTarget = 0.0;
     let hover = 0.0;
     const hoverRate = 3.0;
 
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    function maybeHideFallback() {
+        if (prog && textureReady) fallbackImg.style.display = 'none';
+    }
+
     function setupProgram(fsSrc) {
-        hover = 0.0;
-        hoverTarget = 0.0;
+        if (!vs) return false;
+
+        const newFs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
+        if (!newFs) return false;
+
+        const newProg = gl.createProgram();
+        gl.attachShader(newProg, vs);
+        gl.attachShader(newProg, newFs);
+        gl.linkProgram(newProg);
+        if (!gl.getProgramParameter(newProg, gl.LINK_STATUS)) {
+            console.error('Program link error:', gl.getProgramInfoLog(newProg));
+            gl.deleteProgram(newProg);
+            gl.deleteShader(newFs);
+            return false;
+        }
+
         if (prog) gl.deleteProgram(prog);
         if (fs) gl.deleteShader(fs);
+        prog = newProg;
+        fs = newFs;
+        currentSrc = fsSrc;
+        hover = 0.0;
+        hoverTarget = 0.0;
 
-        prog = gl.createProgram();
-        gl.attachShader(prog, vs);
-        fs = compileShader(fsSrc, gl.FRAGMENT_SHADER);
-        if (!fs) return;
-        gl.attachShader(prog, fs);
-        gl.linkProgram(prog);
         gl.useProgram(prog);
 
         posLoc = gl.getAttribLocation(prog, 'aPosition');
@@ -127,20 +132,47 @@ function initGL(doc, fragmentShader) {
         gl.enableVertexAttribArray(uvLoc);
         gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
         gl.vertexAttribPointer(uvLoc,  2, gl.FLOAT, false, 16, 8);
+
+        maybeHideFallback();
+        return true;
     }
 
-    setupProgram(fragmentShader);
+    function initResources() {
+        prog = null;
+        fs = null;
 
-    const tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
+        vs = compileShader(vertexShaderSrc, gl.VERTEX_SHADER);
 
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, quadData, gl.STATIC_DRAW);
+
+        tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        if (img.complete && img.naturalWidth > 0) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        } else {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+        }
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+
+        setupProgram(currentSrc);
+    }
+
+    canvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+    }, false);
+
+    canvas.addEventListener('webglcontextrestored', () => {
+        initResources();
+    }, false);
 
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -174,14 +206,17 @@ function initGL(doc, fragmentShader) {
         hoverTarget = 0.0;
     });
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        fallbackImg.style.display = 'none';
+        textureReady = true;
+        if (!gl.isContextLost()) {
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        }
+        maybeHideFallback();
     };
     img.onerror = () => { fallbackImg.style.display = 'block'; };
+
+    initResources();
     img.src = 'invader-256.png';
 
     let resizeTimer;

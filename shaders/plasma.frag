@@ -1,5 +1,8 @@
-
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 
 varying vec2 vUV;
 uniform float uTime;
@@ -34,3 +37,4 @@ void main() {
     vec3 color = mix(uColor1, uColor2, plasma);
     gl_FragColor = vec4(color, 1.0);
 }
+

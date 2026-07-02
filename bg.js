@@ -4,8 +4,8 @@ function initBG(doc, fragmentShader) {
     if (!container) return;
 
     const canvas = doc.createElement('canvas');
-    var w = Math.min(window.innerWidth, 1280);
-    var h = Math.min(window.innerHeight, 1280);
+    const w = Math.min(window.innerWidth, 1280);
+    const h = Math.min(window.innerHeight, 1280);
     canvas.width = w;
     canvas.height = h;
     canvas.style.width = '100%';
@@ -27,11 +27,6 @@ function initBG(doc, fragmentShader) {
     const gl = getGLContext(canvas);
     if (!gl) return;
 
-    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, false);
-    canvas.addEventListener('webglcontextrestored', () => {
-        setupProgram(fragmentShader);
-    }, false);
-
     const vsSrc = `
         attribute vec2 aPosition;
         attribute vec2 aUV;
@@ -42,20 +37,7 @@ function initBG(doc, fragmentShader) {
         }
     `;
 
-    const compile = (src, type) => {
-        const s = gl.createShader(type);
-        gl.shaderSource(s, src);
-        gl.compileShader(s);
-        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-            console.error('BG shader error:', gl.getShaderInfoLog(s));
-            return null;
-        }
-        return s;
-    };
-
-    const vs = compile(vsSrc, gl.VERTEX_SHADER);
-
-    const data = new Float32Array([
+    const quadData = new Float32Array([
         -1, -1,  1, 1,
          1, -1,  0, 1,
         -1,  1,  1, 0,
@@ -63,22 +45,47 @@ function initBG(doc, fragmentShader) {
          1, -1,  0, 1,
          1,  1,  0, 0,
     ]);
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-    let prog, fs, posLoc, uvLoc, timeLoc, c1Loc, c2Loc;
+    const compile = (src, type) => {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            console.error('BG shader error:', gl.getShaderInfoLog(s));
+            gl.deleteShader(s);
+            return null;
+        }
+        return s;
+    };
+
+    let vs = null, buf = null;
+    let prog = null, fs = null;
+    let posLoc, uvLoc, timeLoc, c1Loc, c2Loc;
+    let currentSrc = fragmentShader;
 
     function setupProgram(fsSrc) {
+        if (!vs) return false;
+
+        const newFs = compile(fsSrc, gl.FRAGMENT_SHADER);
+        if (!newFs) return false;
+
+        const newProg = gl.createProgram();
+        gl.attachShader(newProg, vs);
+        gl.attachShader(newProg, newFs);
+        gl.linkProgram(newProg);
+        if (!gl.getProgramParameter(newProg, gl.LINK_STATUS)) {
+            console.error('BG program link error:', gl.getProgramInfoLog(newProg));
+            gl.deleteProgram(newProg);
+            gl.deleteShader(newFs);
+            return false;
+        }
+
         if (prog) gl.deleteProgram(prog);
         if (fs) gl.deleteShader(fs);
+        prog = newProg;
+        fs = newFs;
+        currentSrc = fsSrc;
 
-        prog = gl.createProgram();
-        gl.attachShader(prog, vs);
-        fs = compile(fsSrc, gl.FRAGMENT_SHADER);
-        if (!fs) return;
-        gl.attachShader(prog, fs);
-        gl.linkProgram(prog);
         gl.useProgram(prog);
 
         posLoc = gl.getAttribLocation(prog, 'aPosition');
@@ -92,19 +99,41 @@ function initBG(doc, fragmentShader) {
         gl.enableVertexAttribArray(uvLoc);
         gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
         gl.vertexAttribPointer(uvLoc,  2, gl.FLOAT, false, 16, 8);
+
+        return true;
     }
 
-    setupProgram(fragmentShader);
+    function initResources() {
+        prog = null;
+        fs = null;
+
+        vs = compile(vsSrc, gl.VERTEX_SHADER);
+
+        buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, quadData, gl.STATIC_DRAW);
+
+        gl.viewport(0, 0, canvas.width, canvas.height);
+
+        setupProgram(currentSrc);
+    }
+
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, false);
+    canvas.addEventListener('webglcontextrestored', () => { initResources(); }, false);
+
+    initResources();
 
     let color1 = [0.0, 0.0, 0.0];
     let color2 = [0.0, 0.0, 0.0];
+
+    const period = 6283.0;
 
     function render() {
         requestAnimationFrame(render);
         if (gl.isContextLost()) return;
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform1f(timeLoc, performance.now() / 1000);
+        gl.uniform1f(timeLoc, (performance.now() / 1000) % period);
         gl.uniform3fv(c1Loc, color1);
         gl.uniform3fv(c2Loc, color2);
         gl.drawArrays(gl.TRIANGLES, 0, 6);

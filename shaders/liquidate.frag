@@ -1,4 +1,3 @@
-
 precision mediump float;
 
 varying vec2 vUV;
@@ -15,7 +14,7 @@ void main() {
     float time = timeScale*uTime;
     float st = sin(time);
     float ct = cos(time);
-    vec2 t = mix(st*vec2(ct, st), uMouse, uHover);
+    vec2 t = mix(st*vec2(ct, st), uMouse * 2.0 - 1.0, uHover);
     vec2 uv = vUV + t * tex.rg;
     gl_FragColor = texture2D(uTexture, uv);
 }
