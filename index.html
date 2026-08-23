@@ -8,9 +8,13 @@
     <title>Cfr: Stan Serebriakov homepage</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
     <script>
-      document.documentElement.setAttribute('data-theme',
-        localStorage.getItem('theme') ||
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        document.documentElement.setAttribute('data-theme',
+          stored ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      })();
     </script>
     <style type="text/css">
       body { font-family: monospace; background: #fdf6e3; color: #859900 }
@@ -29,9 +33,9 @@
       #e { transition: opacity .111s, visibility .111s; }
       #h { transition: opacity .666s, visibility .666s; }
       .hidden { opacity: 0; visibility: hidden; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-      [data-theme="light"] #ts-light { display: none }
-      [data-theme="dark"]  #ts-dark  { display: none }
+      #ts-toggle { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
 
       @media (max-width: 700px) {
         #td_wrap { vertical-align: top; padding-top: 6vh; }
@@ -54,7 +58,7 @@
     <p><a href="mailto:i+h@cfr.pw">email</a> ·
     <a href="https://t.me/cfrss">telegram</a> ·
     <a href="https://github.com/cfr">github</a></p>
-    <a id="e" href="#">...</a>
+    <a id="e" href="#" aria-expanded="false" aria-controls="h"><span class="sr-only">Show more contacts</span>...</a>
     <div id="h" class="hidden">
      <p><a href="tel:+79217771338">tel</a> ·
      <a href="https://linkedin.com/in/cfrss">linkedin</a> ·
@@ -63,20 +67,20 @@
      <p><a href="https://blog.cfr.pw">tumblr</a> ·
      <a href="http://stackoverflow.com/users/187663/cfr">stackoverflow</a> ·
      <a href="https://instagram.com/cfrs">instagram</a></p>
-     <!-- a href="https://keybase.io/cfr">keybase</a -->
     </div>
     <script>
       document.getElementById('e').addEventListener('click', function (ev) {
         ev.preventDefault();
-        ev.target.classList.add('hidden');
+        ev.currentTarget.classList.add('hidden');
+        ev.currentTarget.setAttribute('aria-expanded', 'true');
         document.getElementById('h').classList.remove('hidden');
       });
     </script>
   </div>
   <div>&nbsp;</div>
-  <div style="font-size:50%;color:#93a1a1">2026</div>
+  <div style="font-size:50%;color:#93a1a1" id="year">2026</div>
   <div style="font-size:50%" id="ts">
-    <a id="ts-light" href="#" style="color:#b58900">light</a> <a id="ts-dark" href="#" style="color:#2aa198">dark</a>
+    <button id="ts-toggle" type="button" aria-pressed="false">dark</button>
   </div>
   <p id="bottom-spacer" style="margin-bottom:170px;"></p>
 </td></tr></tbody></table>
@@ -84,22 +88,24 @@
 <script type="module">
 let theme = document.documentElement.getAttribute('data-theme') || 'light';
 
+document.getElementById('year').textContent = new Date().getFullYear();
+
 function setTheme(t) {
     theme = t;
-    localStorage.setItem('theme', t);
+    try { localStorage.setItem('theme', t); } catch (e) {}
     document.documentElement.setAttribute('data-theme', t);
     updateColors();
+    updateThemeToggle();
 }
 
-document.getElementById('ts-light').addEventListener('click', (e) => {
-    e.preventDefault();
-    setTheme('light');
-});
-
-document.getElementById('ts-dark').addEventListener('click', (e) => {
-    e.preventDefault();
-    setTheme('dark');
-});
+const tsToggle = document.getElementById('ts-toggle');
+function updateThemeToggle() {
+    const isDark = theme === 'dark';
+    tsToggle.setAttribute('aria-pressed', String(isDark));
+    tsToggle.textContent = isDark ? 'light' : 'dark';
+}
+tsToggle.addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
+updateThemeToggle();
 
 function hexToRgb(hex) {
     const v = parseInt(hex.slice(1), 16);
@@ -162,7 +168,7 @@ if (plasmaSrc) {
 
 document.body.addEventListener('click', (e) => {
     if (!swapShader || !shaderSources.length) return;
-    if (e.target.closest('a')) return;
+    if (e.target.closest('a, button')) return;
     shaderIndex = (shaderIndex + 1) % fragmentShaders.length;
     requestAnimationFrame(() => swapShader(shaderSources[shaderIndex]));
 });

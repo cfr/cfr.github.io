@@ -223,6 +223,7 @@ function initGL(doc, fragmentShader) {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
+            if (gl.isContextLost()) return;
             const size = getCanvasSize();
             if (size.w !== canvas.width || size.h !== canvas.height) {
                 canvas.width = size.w;
@@ -237,7 +238,7 @@ function initGL(doc, fragmentShader) {
 
     function render() {
         requestAnimationFrame(render);
-        if (gl.isContextLost()) return;
+        if (gl.isContextLost() || !prog) return;
 
         const now = performance.now();
         const dt = Math.min(0.1, (now - lastFrameTime) / 1000);

@@ -4,13 +4,21 @@ function initBG(doc, fragmentShader) {
     if (!container) return;
 
     const canvas = doc.createElement('canvas');
-    const w = Math.min(window.innerWidth, 1280);
-    const h = Math.min(window.innerHeight, 1280);
-    canvas.width = w;
-    canvas.height = h;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     container.appendChild(canvas);
+
+    function getCanvasSize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        return {
+            w: Math.min(Math.max(1, Math.round(window.innerWidth * dpr)), 2560),
+            h: Math.min(Math.max(1, Math.round(window.innerHeight * dpr)), 2560),
+        };
+    }
+
+    const initialSize = getCanvasSize();
+    canvas.width = initialSize.w;
+    canvas.height = initialSize.h;
 
     function getGLContext(c) {
         const attrs = { alpha: true, failIfMajorPerformanceCaveat: false };
@@ -123,6 +131,20 @@ function initBG(doc, fragmentShader) {
 
     initResources();
 
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (gl.isContextLost()) return;
+            const size = getCanvasSize();
+            if (size.w !== canvas.width || size.h !== canvas.height) {
+                canvas.width = size.w;
+                canvas.height = size.h;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+        }, 100);
+    });
+
     let color1 = [0.0, 0.0, 0.0];
     let color2 = [0.0, 0.0, 0.0];
 
@@ -130,7 +152,7 @@ function initBG(doc, fragmentShader) {
 
     function render() {
         requestAnimationFrame(render);
-        if (gl.isContextLost()) return;
+        if (gl.isContextLost() || !prog) return;
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform1f(timeLoc, (performance.now() / 1000) % period);

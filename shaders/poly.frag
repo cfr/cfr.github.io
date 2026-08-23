@@ -6,7 +6,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.1416;
+const float pi = 3.14159265359;
 
 float mixAngle(float base, float target, float k) {
     float diff = mod(target - base + pi, 2.0 * pi) - pi;

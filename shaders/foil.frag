@@ -6,7 +6,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.1416;
+const float pi = 3.14159265359;
 
 vec2 mixAngle(vec2 base, vec2 target, float k) {
     vec2 diff = mod(target - base + vec2(pi), 2.0 * pi) - pi;
@@ -26,7 +26,7 @@ vec4 foil(vec4 tex, vec2 uv, vec2 a)
     float band1 = clamp(2.0 * sin(ripplePhase) - 1.0 - max(5.0 - dist, 0.0), 0.0, 1.0);
 
     vec2  axis  = vec2(cos(a.x * 0.25), sin(a.x * 0.5));
-    float angle = dot(axis, uv) / (length(axis) * length(uv));
+    float angle = dot(axis, uv) / (length(axis) * max(length(uv), 1e-5));
     float sweepFreq = 2.2 + 0.9 * sin(a.x * 1.75 + 0.25 * a.y);
     float band2 = clamp(5.0 * cos(a.y * 0.25 + angle * 3.14 * sweepFreq) - 4.0 - max(2.0 - length(20.0 * uv), 0.0), 0.0, 1.0);
 

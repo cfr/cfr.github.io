@@ -6,7 +6,7 @@ uniform float uTime;
 uniform vec2 uMouse;
 uniform float uHover;
 
-const float pi = 3.1416;
+const float pi = 3.14159265359;
 
 void main() {
     const float timeScale = 0.25;
